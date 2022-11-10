@@ -25,9 +25,15 @@ Vec3f findPixelColor(Scene const &scene, const Camera &camera, const Intersectio
         pixel1 = scene.materials[material_id - 1].ambient.x * scene.ambient_light.x;
         pixel2 = scene.materials[material_id - 1].ambient.y * scene.ambient_light.y;
         pixel3 = scene.materials[material_id - 1].ambient.z * scene.ambient_light.z;
+
+        for (int currentLight = 0; currentLight < scene.point_lights.size(); currentLight++)
+        {
+            PointLight light = scene.point_lights[currentLight];
+            
+        }
         
     }
-    else // if hitHappened == 0
+    else
     {
         pixel1 = scene.background_color.x;
         pixel2 = scene.background_color.y;
