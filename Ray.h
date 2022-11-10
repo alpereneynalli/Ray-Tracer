@@ -20,7 +20,7 @@ public:
 
     Vec3f getRayPoint(float t);
     // Vec3f getT(const Vec3f&point)const;
-    //comment
+    
 };
 
 #endif
