@@ -1,0 +1,44 @@
+#include "Shading.h"
+
+Vec3f calcIrradiance(const PointLight &light, const Vec3f& intersectionPoint ){
+    
+    float d_2 = dotProduct(light.position - intersectionPoint, light.position - intersectionPoint);
+    
+    if(d_2 != 0.0f){
+        return light.intensity/d_2;
+    }
+    else return{0.0f, 0.0f, 0.0f};
+
+}
+
+Vec3f calcDiffuse(Scene const &scene, const PointLight &light, const Vec3f& intersectionPoint,const Vec3f &wi, int material_id, const Vec3f &normal){
+    
+    Vec3f diffuse = scene.materials[material_id - 1].diffuse;
+    Vec3f irradiance = calcIrradiance(light, intersectionPoint);
+    float dot = dotProduct(wi, normal);
+    
+    if(dot > 0.0f){
+        diffuse.x *= irradiance.x * dot;
+        diffuse.y *= irradiance.y * dot;
+        diffuse.z *= irradiance.z * dot;
+    }
+    else return {0.0f, 0.0f, 0.0f};
+}
+
+
+Vec3f calcSpecular(Scene const &scene, const PointLight &light, const Vec3f& intersectionPoint,const Vec3f &wi , int material_id, const Vec3f &normal, const Ray &ray){
+    
+    Vec3f specular = scene.materials[material_id - 1].specular;
+    Vec3f irradiance = calcIrradiance(light, intersectionPoint);
+    Vec3f wo = normalize(ray.origin - intersectionPoint);
+    Vec3f h = normalize(wi + wo);
+    float dot = dotProduct(h, wo);
+    float phongExp = powf(dot, scene.materials[material_id - 1].phong_exponent);
+    
+    if(dot > 0.0f){
+        specular.x *= irradiance.x * phongExp;
+        specular.y *= irradiance.y * phongExp;
+        specular.z *= irradiance.z * phongExp;
+    }
+    else return {0.0f, 0.0f, 0.0f};
+}
