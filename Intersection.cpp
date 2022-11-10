@@ -4,6 +4,55 @@
 #include "Utils.h"
 #include <iostream>
 
+Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
+
+    std::vector<Intersection> intersectionData;
+    int sizeOfSpheres = scene.spheres.size();
+    int sizeOfTriangles = scene.triangles.size();
+    int sizeOfMeshes = scene.meshes.size();
+
+    int id = 0;
+
+    for (int s = 0; s < sizeOfSpheres; s++)
+    {
+        Intersection data;
+        data.sphereIntersect(scene, ray, s);
+        if (data.flag && data.t >= 0) // data.t < __FLT_MAX__) // try >
+        {
+            data.obj_id = id++;
+            intersectionData.push_back(data);
+        }
+    }
+
+    for (int t = 0; t < sizeOfTriangles; t++)
+    {
+        Intersection data;
+        data.triangleIntersect(scene, ray, t, 0, 7);
+        if (data.flag && data.t >= 0)
+        {
+            data.obj_id = id++;
+            intersectionData.push_back(data);
+            // std::cout << "triangle found " << "\n";
+        }
+    }
+
+    for (int m = 0; m < sizeOfMeshes; m++)
+    {
+        Intersection data;
+        data.meshIntersect(scene, ray, m);
+        if (data.flag && data.t >= 0)
+        {
+            data.obj_id = id++;
+            intersectionData.push_back(data);
+        }
+    }
+
+    Intersection theOne = Intersection::findFirst(intersectionData);
+    return theOne;
+}
+
+
+
 Intersection Intersection::findFirst(std::vector<Intersection> &data)
 {
     Intersection curr;

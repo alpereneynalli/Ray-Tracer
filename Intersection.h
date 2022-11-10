@@ -17,6 +17,7 @@ public:
     void sphereIntersect(Scene const &scene, Ray ray, int index);
     void triangleIntersect(Scene const &scene, Ray ray, int index, bool isMesh, int meshIndex);
     void meshIntersect(Scene const &scene, Ray ray, int index);
+    static Intersection calculateIntersection(Scene const &scene, Ray ray);
     static Intersection findFirst(std::vector<Intersection> &data);
 };
 
