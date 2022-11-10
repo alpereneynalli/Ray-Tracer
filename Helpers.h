@@ -11,9 +11,12 @@ inline float dotProduct(const Vec3f&a ,const Vec3f&b)
 
 inline Vec3f crossProduct(const Vec3f&a ,const Vec3f&b)
 {
-    return {a.y * b.z - a.z * b.y,
-            a.z * b.x - a.x * b.z,
-            a.x * b.y - b.y * a.x};
+    Vec3f result;
+    result.x = a.y*b.z - a.z*b.y;
+    result.y = a.z*b.x - a.x*b.z;
+    result.z = a.x*b.y - a.y*b.x;
+
+    return result;
 }
 
 inline float determinant(float a_00, float a_01, float a_02,

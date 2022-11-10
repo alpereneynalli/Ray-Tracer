@@ -175,7 +175,7 @@ void Intersection::triangleIntersect(Scene const &scene, Ray ray, int index, boo
 
     this->flag = true;
     this->intersectionPoint = ray.getRayPoint(t);
-    this->normal = normalize(crossProduct(v2 - v1, v0 - v1));
+    this->normal = normalize(crossProduct(v1 - v0, v2 - v0));
 }
 void Intersection::meshIntersect(Scene const &scene, Ray ray, int index)
 {
