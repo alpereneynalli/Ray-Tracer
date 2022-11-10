@@ -22,12 +22,10 @@ Vec3f findPixelColor(Scene const &scene, const Camera &camera, const Intersectio
     {
         int material_id = intersection.material_id;
 
-        // pixel1 = scene.materials[material_id - 1].ambient.x * scene.ambient_light.x;
-        // pixel2 = scene.materials[material_id - 1].ambient.y * scene.ambient_light.y;
-        // pixel3 = scene.materials[material_id - 1].ambient.z * scene.ambient_light.z;
-        pixel1 = 200;
-        pixel2 = 0;
-        pixel3 = 0;
+        pixel1 = scene.materials[material_id - 1].ambient.x * scene.ambient_light.x;
+        pixel2 = scene.materials[material_id - 1].ambient.y * scene.ambient_light.y;
+        pixel3 = scene.materials[material_id - 1].ambient.z * scene.ambient_light.z;
+        
     }
     else // if hitHappened == 0
     {
