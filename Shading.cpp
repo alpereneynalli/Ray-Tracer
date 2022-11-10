@@ -139,6 +139,7 @@ Vec3f calcDiffuse(Scene const &scene, const PointLight &light, const Vec3f& inte
         diffuse.x *= irradiance.x * dot;
         diffuse.y *= irradiance.y * dot;
         diffuse.z *= irradiance.z * dot;
+        return diffuse;
     }
     else return {0.0f, 0.0f, 0.0f};
 }
@@ -157,6 +158,7 @@ Vec3f calcSpecular(Scene const &scene, const PointLight &light, const Vec3f& int
         specular.x *= irradiance.x * phongExp;
         specular.y *= irradiance.y * phongExp;
         specular.z *= irradiance.z * phongExp;
+        return specular;
     }
     else return {0.0f, 0.0f, 0.0f};
 }
