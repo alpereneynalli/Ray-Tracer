@@ -82,6 +82,8 @@ Ray Ray::generateRay(const Camera &camera, int i, int j)
 }
 
 
-//Vec3f Ray::getT(const Vec3f&p)const{
-    // p = o + td; p - o = td
-//}
+float Ray::getT(const Vec3f&p)const{
+    Vec3f diff = p - this->origin;
+    
+    return (diff.x + diff.y + diff.z)  / (this->direction.x + this->direction.y + this->direction.z);
+}

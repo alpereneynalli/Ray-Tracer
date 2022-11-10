@@ -11,7 +11,7 @@
 typedef unsigned char RGB[3];
 using namespace parser;
 
-Vec3f findPixelColor(Scene const &scene, const Camera &camera, const Intersection &intersection, const Ray &ray)
+Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &intersection, const Ray &ray)
 {
     float pixel1 = 0.0f;
     float pixel2 = 0.0f;
@@ -41,10 +41,26 @@ Vec3f findPixelColor(Scene const &scene, const Camera &camera, const Intersectio
             Vec3f epsilon = wi * scene.shadow_ray_epsilon;
 
             Ray ray(intersection.intersectionPoint + epsilon, wi);
+            Intersection intersection;
+            float tL = ray.getT(light.position);
             
-            for (int currentSphere = 0; currentSphere < spheresSize; currentSphere++)
+            for (int cur = 0; cur < spheresSize; cur++)
             {
-                /* code */
+                Sphere sphere = scene.spheres[cur];
+          		Vec3f center = scene.vertex_data[sphere.center_vertex_id - 1];
+          		float radius = sphere.radius;
+
+                intersection.sphereIntersect(scene, ray , cur);
+
+                if (intersection.flag)
+                {
+                    if (tL > intersection.t && intersection.t >= 0)
+                    {
+                        isShadow = true;
+                    }
+                    
+                }
+                
             }
 
             if (!isShadow)
@@ -105,7 +121,7 @@ int main(int argc, char *argv[])
 
                 Intersection theOne = Intersection::calculateIntersection(scene, ray);
 
-                Vec3f pixelColor = findPixelColor(scene, cur, theOne, ray);
+                Vec3f pixelColor = findColor(scene, cur, theOne, ray);
 
                 if (pixelColor.x > 255)
                     image[pixelNumber] = 255;

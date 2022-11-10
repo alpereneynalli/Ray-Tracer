@@ -19,7 +19,7 @@ public:
     static Ray generateRay(const Camera & camera, int i, int j);
 
     Vec3f getRayPoint(float t);
-    // Vec3f getT(const Vec3f&point)const;
+    float getT(const Vec3f&point)const;
     
 };
 
