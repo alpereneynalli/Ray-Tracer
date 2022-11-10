@@ -13,13 +13,13 @@ typedef unsigned char RGB[3];
 using namespace parser;
 
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[1])
 {
     Scene scene;
-    scene.loadFromXml("/mnt/c/Users/alpereneynalli/Desktop/477/code_template/horse_and_mug.xml");
+    scene.loadFromXml(argv[1]);
     int cameraNumber = scene.cameras.size();
 
-    for (int c = 0; c < cameraNumber; c++)
+    for (int c = 0; c < 1; c++)
     {
         Camera cur = scene.cameras[c];
         int width = cur.image_width;
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
                 Intersection theOne = Intersection::calculateIntersection(scene, ray);
 
-                Vec3f pixelColor = findColor(scene, cur, theOne, ray);
+                Vec3f pixelColor = findColor(scene, cur, theOne, ray, scene.max_recursion_depth);
 
                 if (pixelColor.x > 255)
                     image[pixelNumber] = 255;

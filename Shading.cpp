@@ -1,6 +1,6 @@
 #include "Shading.h"
 
-Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &intersection, const Ray &ray)
+Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &intersection, const Ray &ray, int maxDepth)
 {
     float pixel1 = 0.0f;
     float pixel2 = 0.0f;
@@ -101,6 +101,26 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
   		        pixel3 += diffuse.z + specular.z;
             
 	        }
+
+            bool isReflective = scene.materials[material_id - 1].mirror.x > 0.0f || scene.materials[material_id - 1].mirror.y > 0.0f || scene.materials[material_id - 1].mirror.z > 0.0f;
+            Vec3f reflectionColor = {0.0f, 0.0f, 0.0f};
+            if (isReflective && maxDepth > 0)
+            {
+                Vec3f reflectionDirection = intersection.normal * (-2 * dotProduct(ray.direction, intersection.normal)) + ray.direction;
+                Vec3f epsilon = reflectionDirection * scene.shadow_ray_epsilon;
+                
+                Ray reflectionRay(intersection.intersectionPoint + epsilon, reflectionDirection);
+                
+                Intersection reflectionIntersection = Intersection::calculateIntersection(scene, reflectionRay);
+                if(reflectionIntersection.obj_id == intersection.obj_id)
+                {
+                    reflectionColor = findColor(scene, camera, reflectionIntersection, reflectionRay, maxDepth - 1);
+                }
+                pixel1 += reflectionColor.x * scene.materials[material_id - 1].mirror.x;
+                pixel2 += reflectionColor.y * scene.materials[material_id - 1].mirror.y;
+                pixel3 += reflectionColor.z * scene.materials[material_id - 1].mirror.z;
+            }
+
         }
         
     }
