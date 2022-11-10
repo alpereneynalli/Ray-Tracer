@@ -12,9 +12,9 @@ using namespace parser;
 
 Vec3f findPixelColor(Scene const &scene, const Camera &camera, const Intersection &intersection, const Ray &ray)
 {
-    float pixel1 = 0;
-    float pixel2 = 0;
-    float pixel3 = 0;
+    float pixel1 = 0.0f;
+    float pixel2 = 0.0f;
+    float pixel3 = 0.0f;
 
     Vec3f pixelColor;
 
