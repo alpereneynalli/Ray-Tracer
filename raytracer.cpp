@@ -16,10 +16,10 @@ using namespace parser;
 int main(int argc, char *argv[])
 {
     Scene scene;
-    scene.loadFromXml("/mnt/c/Users/alpereneynalli/Desktop/477/code_template/simple.xml");
+    scene.loadFromXml("/mnt/c/Users/alpereneynalli/Desktop/477/code_template/scienceTree.xml");
     int cameraNumber = scene.cameras.size();
 
-    for (int c = 0; c < cameraNumber; c++)
+    for (int c = 0; c < 1; c++)
     {
         Camera cur = scene.cameras[c];
         int width = cur.image_width;

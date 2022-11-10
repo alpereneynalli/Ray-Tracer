@@ -26,7 +26,7 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
             PointLight light = scene.point_lights[currentLight];
             bool isShadow = false;
 
-            Vec3f wi = normalize(intersection.intersectionPoint - light.position);
+            Vec3f wi = normalize(light.position - intersection.intersectionPoint);
             Vec3f epsilon = wi * scene.shadow_ray_epsilon;
 
             Ray rayShadow(intersection.intersectionPoint + epsilon, wi);
