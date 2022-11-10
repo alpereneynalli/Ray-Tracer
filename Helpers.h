@@ -1,11 +1,10 @@
-// copied
-
 #ifndef _HELPERS_H_
 #define _HELPERS_H_
 
 #include <cmath>
 #include "Utils.h"
-//comment
+
+
 inline float dotProduct(const Vec3f&a ,const Vec3f&b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z;
