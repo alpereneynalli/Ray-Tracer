@@ -6,6 +6,7 @@
 #include <vector>
 #include "float.h"
 #include <cmath>
+#include "Helpers.h"
 
 typedef unsigned char RGB[3];
 using namespace parser;
@@ -18,6 +19,11 @@ Vec3f findPixelColor(Scene const &scene, const Camera &camera, const Intersectio
 
     Vec3f pixelColor;
 
+    int lightsSize = scene.point_lights.size();
+    int spheresSize = scene.spheres.size();
+    int trianglesSize = scene.triangles.size();
+    int meshesSize = scene.meshes.size();
+
     if (intersection.flag)
     {
         int material_id = intersection.material_id;
@@ -26,9 +32,38 @@ Vec3f findPixelColor(Scene const &scene, const Camera &camera, const Intersectio
         pixel2 = scene.materials[material_id - 1].ambient.y * scene.ambient_light.y;
         pixel3 = scene.materials[material_id - 1].ambient.z * scene.ambient_light.z;
 
-        for (int currentLight = 0; currentLight < scene.point_lights.size(); currentLight++)
+        for (int currentLight = 0; currentLight < lightsSize; currentLight++)
         {
             PointLight light = scene.point_lights[currentLight];
+            bool isShadow = false;
+
+            Vec3f wi = normalize(intersection.intersectionPoint - light.position);
+            Vec3f epsilon = wi * scene.shadow_ray_epsilon;
+
+            Ray ray(intersection.intersectionPoint + epsilon, wi);
+            
+            for (int currentSphere = 0; currentSphere < spheresSize; currentSphere++)
+            {
+                /* code */
+            }
+
+            if (!isShadow)
+            {
+                for (int currentTriangle = 0; currentTriangle < trianglesSize; currentTriangle++)
+                {
+                    /* code */
+                }
+                
+            }
+            
+            if (!isShadow)
+            {
+                for (int currentMesh = 0; currentMesh < meshesSize; currentMesh++)
+                {
+                    /* code */
+                }
+            }
+            
             
         }
         
