@@ -3,7 +3,7 @@
 
 #include <cmath>
 #include "Utils.h"
-//comment
+
 
 inline float dotProduct(const Vec3f&a ,const Vec3f&b)
 {
