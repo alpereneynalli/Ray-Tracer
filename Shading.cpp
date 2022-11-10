@@ -1,5 +1,123 @@
 #include "Shading.h"
 
+Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &intersection, const Ray &ray)
+{
+    float pixel1 = 0.0f;
+    float pixel2 = 0.0f;
+    float pixel3 = 0.0f;
+
+    Vec3f pixelColor;
+
+    int lightsSize = scene.point_lights.size();
+    int spheresSize = scene.spheres.size();
+    int trianglesSize = scene.triangles.size();
+    int meshesSize = scene.meshes.size();
+
+    if (intersection.flag)
+    {
+        int material_id = intersection.material_id;
+
+        pixel1 = scene.materials[material_id - 1].ambient.x * scene.ambient_light.x;
+        pixel2 = scene.materials[material_id - 1].ambient.y * scene.ambient_light.y;
+        pixel3 = scene.materials[material_id - 1].ambient.z * scene.ambient_light.z;
+
+        for (int currentLight = 0; currentLight < lightsSize; currentLight++)
+        {
+            PointLight light = scene.point_lights[currentLight];
+            bool isShadow = false;
+
+            Vec3f wi = normalize(intersection.intersectionPoint - light.position);
+            Vec3f epsilon = wi * scene.shadow_ray_epsilon;
+
+            Ray rayShadow(intersection.intersectionPoint + epsilon, wi);
+            Intersection data;
+            float tL = rayShadow.getT(light.position);
+            
+            for (int cur = 0; cur < spheresSize; cur++)
+            {
+                Sphere sphere = scene.spheres[cur];
+          		Vec3f center = scene.vertex_data[sphere.center_vertex_id - 1];
+          		float radius = sphere.radius;
+
+                data.sphereIntersect(scene, rayShadow , cur);
+
+                if (data.flag)
+                {
+                    if (tL > data.t && data.t >= 0)
+                    {
+                        isShadow = true;
+                        break;
+                    }
+                    
+                }
+                
+            }
+
+            if (!isShadow)
+            {
+                for (int cur = 0; cur < trianglesSize; cur++)
+                {
+                    data.triangleIntersect(scene, rayShadow, cur, 0, 0);
+                    
+                    if(data.flag)
+                    {
+                        if(tL > data.t && data.t >= 0)
+                        {
+                            isShadow = true;
+                            break;
+                        }
+                    }
+                }
+                
+            }
+            
+            if (!isShadow)
+            {
+                for (int currentMesh = 0; currentMesh < meshesSize; currentMesh++)
+                {
+                    data.meshIntersect(scene, rayShadow, currentMesh);
+                    
+                    if(data.flag)
+	            	{
+	              		if(tL > data.t && data.t >= 0)
+	              		{
+	                		isShadow = true;
+                            break;
+	              		}
+	            	}
+                }
+            }
+            
+            if(!isShadow)
+	        {
+		        int material_id = intersection.material_id;
+
+		        Vec3f diffuse = calcDiffuse(scene, light, intersection.intersectionPoint, wi, material_id, intersection.normal);
+
+		        Vec3f specular = calcSpecular(scene, light, intersection.intersectionPoint, wi, material_id, intersection.normal, ray);
+		                    
+              	pixel1 += diffuse.x + specular.x;
+  		        pixel2 += diffuse.y + specular.y;
+  		        pixel3 += diffuse.z + specular.z;
+            
+	        }
+        }
+        
+    }
+    else
+    {
+        pixel1 = scene.background_color.x;
+        pixel2 = scene.background_color.y;
+        pixel3 = scene.background_color.z;
+    }
+
+    pixelColor.x = pixel1;
+    pixelColor.y = pixel2;
+    pixelColor.z = pixel3;
+
+    return pixelColor;
+}
+
 Vec3f calcIrradiance(const PointLight &light, const Vec3f& intersectionPoint ){
     
     float d_2 = dotProduct(light.position - intersectionPoint, light.position - intersectionPoint);

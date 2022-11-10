@@ -7,96 +7,11 @@
 #include "float.h"
 #include <cmath>
 #include "Helpers.h"
+#include "Shading.h"
 
 typedef unsigned char RGB[3];
 using namespace parser;
 
-Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &intersection, const Ray &ray)
-{
-    float pixel1 = 0.0f;
-    float pixel2 = 0.0f;
-    float pixel3 = 0.0f;
-
-    Vec3f pixelColor;
-
-    int lightsSize = scene.point_lights.size();
-    int spheresSize = scene.spheres.size();
-    int trianglesSize = scene.triangles.size();
-    int meshesSize = scene.meshes.size();
-
-    if (intersection.flag)
-    {
-        int material_id = intersection.material_id;
-
-        pixel1 = scene.materials[material_id - 1].ambient.x * scene.ambient_light.x;
-        pixel2 = scene.materials[material_id - 1].ambient.y * scene.ambient_light.y;
-        pixel3 = scene.materials[material_id - 1].ambient.z * scene.ambient_light.z;
-
-        for (int currentLight = 0; currentLight < lightsSize; currentLight++)
-        {
-            PointLight light = scene.point_lights[currentLight];
-            bool isShadow = false;
-
-            Vec3f wi = normalize(intersection.intersectionPoint - light.position);
-            Vec3f epsilon = wi * scene.shadow_ray_epsilon;
-
-            Ray ray(intersection.intersectionPoint + epsilon, wi);
-            Intersection intersection;
-            float tL = ray.getT(light.position);
-            
-            for (int cur = 0; cur < spheresSize; cur++)
-            {
-                Sphere sphere = scene.spheres[cur];
-          		Vec3f center = scene.vertex_data[sphere.center_vertex_id - 1];
-          		float radius = sphere.radius;
-
-                intersection.sphereIntersect(scene, ray , cur);
-
-                if (intersection.flag)
-                {
-                    if (tL > intersection.t && intersection.t >= 0)
-                    {
-                        isShadow = true;
-                    }
-                    
-                }
-                
-            }
-
-            if (!isShadow)
-            {
-                for (int currentTriangle = 0; currentTriangle < trianglesSize; currentTriangle++)
-                {
-                    /* code */
-                }
-                
-            }
-            
-            if (!isShadow)
-            {
-                for (int currentMesh = 0; currentMesh < meshesSize; currentMesh++)
-                {
-                    /* code */
-                }
-            }
-            
-            
-        }
-        
-    }
-    else
-    {
-        pixel1 = scene.background_color.x;
-        pixel2 = scene.background_color.y;
-        pixel3 = scene.background_color.z;
-    }
-
-    pixelColor.x = pixel1;
-    pixelColor.y = pixel2;
-    pixelColor.z = pixel3;
-
-    return pixelColor;
-}
 
 int main(int argc, char *argv[])
 {
