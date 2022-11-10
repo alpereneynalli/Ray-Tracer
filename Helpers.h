@@ -6,46 +6,38 @@
 #include <cmath>
 #include "Utils.h"
 
-inline float dotProduct(const Vec3f & first, const Vec3f & second)
+inline float dotProduct(const Vec3f&a ,const Vec3f&b)
 {
-	return ((first.x * second.x) + (first.y * second.y) + (first.z * second.z));
+    return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-
-inline Vec3f crossProduct(const Vec3f & first, const Vec3f & second)
+inline Vec3f crossProduct(const Vec3f&a ,const Vec3f&b)
 {
-    Vec3f res;
-    res.x = (first.y*second.z) - (first.z*second.y);
-    res.y = (first.z*second.x) - (first.x*second.z);
-    res.z = (first.x*second.y) - (first.y*second.x);
-
-    return res;
+    return {a.y * b.z - a.z * b.y,
+            a.z * b.x - a.x * b.z,
+            a.x * b.y - b.y * a.x};
 }
 
-inline float determinant(
-            float x_00,float x_01,float x_02,
-            float x_10,float x_11,float x_12,
-            float x_20,float x_21,float x_22)
+inline float determinant(float a_00, float a_01, float a_02,
+                  float a_10, float a_11, float a_12,
+                  float a_20, float a_21, float a_22)
 {
-    return
-        (x_00 * ((x_11 * x_22) - (x_21 * x_12))) -
-        (x_10 * ((x_22 * x_01) - (x_02 * x_21))) +
-        (x_20 * ((x_01 * x_12) - (x_02 * x_11)));
+    return  ((a_00 * (a_11 * a_22 - a_21 * a_12)) -
+            (a_10 * (a_22 * a_01 - a_02 * a_21)) +
+            (a_20 * (a_01 * a_12 - a_02 * a_11)));                 
 }
 
-inline float vectorLength(const Vec3f & vector) {
-    return std::sqrt(vector.x * vector.x
-                     + vector.y * vector.y
-                     + vector.z * vector.z );
+inline float vectorLength(const Vec3f& a){
+    float length = sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
+    return length;
 }
 
-inline Vec3f normalize(Vec3f vector) {
-    float vecLength = vectorLength(vector);
-    if (vecLength == 0.0f)
-        return Vec3f(); // return zero vector
-
-    vector = divFloat(vector, vecLength);
-    return vector;
+inline Vec3f normalize(Vec3f a){
+    float length = vectorLength(a);
+    if(length == 0.0f){
+        return a; // a is a zero vector
+    }
+    a /= length;
+    return a;
 }
-
 #endif
