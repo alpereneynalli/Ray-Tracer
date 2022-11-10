@@ -3,7 +3,7 @@
 
 #include <cmath>
 #include "Utils.h"
-
+//shading
 inline float dotProduct(const Vec3f&a ,const Vec3f&b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z;
