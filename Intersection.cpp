@@ -3,24 +3,31 @@
 #include "Helpers.h"
 #include "Utils.h"
 #include <iostream>
+#include <float.h>
 
 Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
 
-    std::vector<Intersection> intersectionData;
     int sizeOfSpheres = scene.spheres.size();
     int sizeOfTriangles = scene.triangles.size();
     int sizeOfMeshes = scene.meshes.size();
 
     int id = 0;
 
+    Intersection theOne;
+    theOne.flag = false;
+    float minT = FLT_MAX;
+
     for (int s = 0; s < sizeOfSpheres; s++)
     {
         Intersection data;
         data.sphereIntersect(scene, ray, s);
         if (data.flag && data.t >= 0) // data.t < __FLT_MAX__) // try >
-        {
-            data.obj_id = id++;
-            intersectionData.push_back(data);
+        {   
+            if(data.t < minT){
+                minT = data.t;
+                theOne = data;
+            }
+            
         }
     }
 
@@ -30,9 +37,10 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
         data.triangleIntersect(scene, ray, t, 0, 7);
         if (data.flag && data.t >= 0)
         {
-            data.obj_id = id++;
-            intersectionData.push_back(data);
-            // std::cout << "triangle found " << "\n";
+            if(data.t < minT){
+                minT = data.t;
+                theOne = data;
+            }
         }
     }
 
@@ -42,12 +50,14 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
         data.meshIntersect(scene, ray, m);
         if (data.flag && data.t >= 0)
         {
-            data.obj_id = id++;
-            intersectionData.push_back(data);
+            if(data.t < minT){
+                minT = data.t;
+                theOne = data;
+            }
         }
     }
 
-    Intersection theOne = Intersection::findFirst(intersectionData);
+    
     return theOne;
 }
 
@@ -180,18 +190,24 @@ void Intersection::triangleIntersect(Scene const &scene, Ray ray, int index, boo
 void Intersection::meshIntersect(Scene const &scene, Ray ray, int index)
 {
     Mesh mesh = scene.meshes[index];
-    std::vector<Intersection> data;
     Intersection element;
+    Intersection theOne;
+    theOne.flag = false;
+    float minT = __FLT_MAX__;
     int faceSize = mesh.faces.size();
+
+
     for (int faceIndex = 0; faceIndex < faceSize; faceIndex++)
     {
         element.triangleIntersect(scene, ray, faceIndex, 1, index);
         if (element.flag && element.t >= 0)
         { // check t
-            data.push_back(element);
+            if(element.t < minT){
+                minT = element.t;
+                theOne = element;
+            }
         }
     }
     
-    
-    *this = findFirst(data);
+    *this = theOne;
 }
