@@ -26,7 +26,12 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
         {   
             if(data.t < minT){
                 minT = data.t;
-                theOne = data;
+                theOne.flag = data.flag;
+                theOne.intersectionPoint = data.intersectionPoint;
+                theOne.material_id = data.material_id;
+                theOne.normal = data.normal;
+                theOne.obj_id = data.obj_id;
+                theOne.t = data.t;
             }
             
         }
@@ -40,8 +45,12 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
         if (data.flag && data.t >= 0)
         {
             if(data.t < minT){
-                minT = data.t;
-                theOne = data;
+                theOne.flag = data.flag;
+                theOne.intersectionPoint = data.intersectionPoint;
+                theOne.material_id = data.material_id;
+                theOne.normal = data.normal;
+                theOne.obj_id = data.obj_id;
+                theOne.t = data.t;
             }
         }
     }
@@ -54,8 +63,12 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
         if (data.flag && data.t >= 0)
         {
             if(data.t < minT){
-                minT = data.t;
-                theOne = data;
+                theOne.flag = data.flag;
+                theOne.intersectionPoint = data.intersectionPoint;
+                theOne.material_id = data.material_id;
+                theOne.normal = data.normal;
+                theOne.obj_id = data.obj_id;
+                theOne.t = data.t;
             }
         }
     }
