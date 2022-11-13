@@ -30,10 +30,6 @@ int main(int argc, char *argv[1])
 
         unsigned char *image = new unsigned char[width * height * 3];
         int pixelNumber = 0;
-        
-        //change
-        int progressBar = 0;
-        auto start = std::chrono::system_clock::now();
 
         for (int i = 0; i < height; i++)
         {
@@ -63,19 +59,7 @@ int main(int argc, char *argv[1])
                 pixelNumber += 3;
             }
 
-            //delete
-            if(i * 100 / width > progressBar)
-            {
-                progressBar = i * 100 / width;
-                std::cout << progressBar << "% ";// Some computation here
-                auto end = std::chrono::system_clock::now();
-            
-                std::chrono::duration<double> elapsed_seconds = end-start;
-            
-                std::cout << "elapsed time: " << elapsed_seconds.count() << "s"
-                        << std::endl;
-            }
-
+        
         }
 
         write_ppm(cur.image_name.c_str(), image, width, height);

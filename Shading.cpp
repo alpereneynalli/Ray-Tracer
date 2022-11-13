@@ -111,7 +111,7 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
                 Ray reflectionRay(intersection.intersectionPoint + epsilon, reflectionDirection);
                 
                 Intersection reflectionIntersection = Intersection::calculateIntersection(scene, reflectionRay);
-        
+
                 reflectionColor = findColor(scene, camera, reflectionIntersection, reflectionRay, maxDepth - 1);
                 
                 pixel1 += reflectionColor.x * scene.materials[material_id - 1].mirror.x;

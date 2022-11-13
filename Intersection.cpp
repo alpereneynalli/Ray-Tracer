@@ -20,6 +20,7 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
     for (int s = 0; s < sizeOfSpheres; s++)
     {
         Intersection data;
+        
         data.sphereIntersect(scene, ray, s);
         if (data.flag && data.t >= 0) // data.t < __FLT_MAX__) // try >
         {   
