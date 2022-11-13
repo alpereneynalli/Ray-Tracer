@@ -103,28 +103,30 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
             
 	        }
 
-            bool isReflective = scene.materials[material_id - 1].mirror.x > 0.0f || scene.materials[material_id - 1].mirror.y > 0.0f || scene.materials[material_id - 1].mirror.z > 0.0f;
-            Vec3f reflectionColor = {0.0f, 0.0f, 0.0f};
-            if (isReflective && maxDepth > 0)
-            {
-                Vec3f reflectionDirection = normalize(intersection.normal * (-2 * dotProduct(ray.direction, intersection.normal)) + ray.direction);
-                Vec3f epsilon = reflectionDirection * scene.shadow_ray_epsilon;
-                Ray reflectionRay(intersection.intersectionPoint + epsilon, reflectionDirection);
-                
-                
-                Intersection reflectionIntersection = Intersection::calculateIntersection(scene, reflectionRay);
-                
-                if(reflectionIntersection.flag && reflectionIntersection.obj_id != intersection.obj_id){
-                    reflectionColor = findColor(scene, camera, reflectionIntersection, reflectionRay, maxDepth - 1);
-                    
-                }
-                pixel1 += reflectionColor.x * scene.materials[material_id - 1].mirror.x;
-                pixel2 += reflectionColor.y * scene.materials[material_id - 1].mirror.y;
-                pixel3 += reflectionColor.z * scene.materials[material_id - 1].mirror.z;
-            }
+            
 
         }
         
+        bool isReflective = scene.materials[material_id - 1].mirror.x > 0.0f || scene.materials[material_id - 1].mirror.y > 0.0f || scene.materials[material_id - 1].mirror.z > 0.0f;
+        Vec3f reflectionColor = {0.0f, 0.0f, 0.0f};
+        if (isReflective && maxDepth > 0)
+        {
+            Vec3f reflectionDirection = normalize(intersection.normal * (-2 * dotProduct(ray.direction, intersection.normal)) + ray.direction);
+            Vec3f epsilon = reflectionDirection * scene.shadow_ray_epsilon;
+            Ray reflectionRay(intersection.intersectionPoint + epsilon, reflectionDirection);
+            
+            
+            Intersection reflectionIntersection = Intersection::calculateIntersection(scene, reflectionRay);
+            
+            if(reflectionIntersection.flag && reflectionIntersection.obj_id != intersection.obj_id){
+                reflectionColor = findColor(scene, camera, reflectionIntersection, reflectionRay, maxDepth - 1);
+                
+            }
+            pixel1 += reflectionColor.x * scene.materials[material_id - 1].mirror.x;
+            pixel2 += reflectionColor.y * scene.materials[material_id - 1].mirror.y;
+            pixel3 += reflectionColor.z * scene.materials[material_id - 1].mirror.z;
+        }
+
     }
     else
     {
@@ -170,6 +172,7 @@ Vec3f calcSpecular(Scene const &scene, const PointLight &light, const Vec3f& int
     Vec3f irradiance = calcIrradiance(light, intersectionPoint);
     Vec3f h = normalize(wi - ray.direction);
     float dot = std::max(0.0f, dotProduct(normal, h));
+    
     float phongExp = powf(dot, scene.materials[material_id - 1].phong_exponent);
     
     
