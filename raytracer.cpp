@@ -19,7 +19,7 @@ int main(int argc, char *argv[1])
     scene.loadFromXml(argv[1]);
     int cameraNumber = scene.cameras.size();
 
-    for (int c = 0; c < 1; c++)
+    for (int c = 0; c < cameraNumber; c++)
     {
         Camera cur = scene.cameras[c];
         int width = cur.image_width;
