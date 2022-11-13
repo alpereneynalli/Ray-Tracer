@@ -13,7 +13,7 @@ public:
     int material_id;
     int obj_id;
     bool flag;
-
+    
     void sphereIntersect(Scene const &scene, Ray ray, int index);
     void triangleIntersect(Scene const &scene, Ray ray, int index, bool isMesh, int meshIndex);
     void meshIntersect(Scene const &scene, Ray ray, int index);

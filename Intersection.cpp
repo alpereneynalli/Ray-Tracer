@@ -20,7 +20,7 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
     for (int s = 0; s < sizeOfSpheres; s++)
     {
         Intersection data;
-        
+        data.obj_id = id++;
         data.sphereIntersect(scene, ray, s);
         if (data.flag && data.t >= 0) // data.t < __FLT_MAX__) // try >
         {   
@@ -35,6 +35,7 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
     for (int t = 0; t < sizeOfTriangles; t++)
     {
         Intersection data;
+        data.obj_id = id++;
         data.triangleIntersect(scene, ray, t, 0, 7);
         if (data.flag && data.t >= 0)
         {
@@ -48,6 +49,7 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
     for (int m = 0; m < sizeOfMeshes; m++)
     {
         Intersection data;
+        data.obj_id = id++;
         data.meshIntersect(scene, ray, m);
         if (data.flag && data.t >= 0)
         {
