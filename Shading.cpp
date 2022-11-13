@@ -108,7 +108,7 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
             {
                 Vec3f reflectionDirection = normalize(intersection.normal * (-2 * dotProduct(ray.direction, intersection.normal)) + ray.direction);
                 Vec3f epsilon = reflectionDirection * scene.shadow_ray_epsilon;
-                
+                // fsfasf
                 Ray reflectionRay(intersection.intersectionPoint + epsilon, reflectionDirection);
                 
                 Intersection reflectionIntersection = Intersection::calculateIntersection(scene, reflectionRay);
