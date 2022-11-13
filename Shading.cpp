@@ -1,4 +1,5 @@
 #include "Shading.h"
+#include <iostream>
 
 Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &intersection, const Ray &ray, int maxDepth)
 {
@@ -112,9 +113,10 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
                 
                 
                 Intersection reflectionIntersection = Intersection::calculateIntersection(scene, reflectionRay);
-
+                
                 if(reflectionIntersection.flag && reflectionIntersection.obj_id != intersection.obj_id){
                     reflectionColor = findColor(scene, camera, reflectionIntersection, reflectionRay, maxDepth - 1);
+                    
                 }
                 pixel1 += reflectionColor.x * scene.materials[material_id - 1].mirror.x;
                 pixel2 += reflectionColor.y * scene.materials[material_id - 1].mirror.y;
@@ -153,13 +155,7 @@ Vec3f calcDiffuse(Scene const &scene, const PointLight &light, const Vec3f& inte
     
     Vec3f diffuse = scene.materials[material_id - 1].diffuse;
     Vec3f irradiance = calcIrradiance(light, intersectionPoint);
-    float dot = dotProduct(wi, normal);
-    
-    if (dot < 0)
-    {
-        dot = 0;
-    }
-    
+    float dot = std::max(0.0f, dotProduct(wi, normal));
     
     diffuse.x *= irradiance.x * dot;
     diffuse.y *= irradiance.y * dot;
@@ -173,12 +169,10 @@ Vec3f calcSpecular(Scene const &scene, const PointLight &light, const Vec3f& int
     Vec3f specular = scene.materials[material_id - 1].specular;
     Vec3f irradiance = calcIrradiance(light, intersectionPoint);
     Vec3f h = normalize(wi - ray.direction);
-    float dot = dotProduct(normal, h);
+    float dot = std::max(0.0f, dotProduct(normal, h));
     float phongExp = powf(dot, scene.materials[material_id - 1].phong_exponent);
     
-    if(dot < 0){
-        dot = 0;
-    }
+    
     specular.x *= irradiance.x * phongExp;
     specular.y *= irradiance.y * phongExp;
     specular.z *= irradiance.z * phongExp;
