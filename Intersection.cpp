@@ -20,18 +20,13 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
     for (int s = 0; s < sizeOfSpheres; s++)
     {
         Intersection data;
-        data.obj_id = id++;
         data.sphereIntersect(scene, ray, s);
+        data.obj_id = id++;
         if (data.flag && data.t >= 0) // data.t < __FLT_MAX__) // try >
         {   
             if(data.t < minT){
                 minT = data.t;
-                theOne.flag = data.flag;
-                theOne.intersectionPoint = data.intersectionPoint;
-                theOne.material_id = data.material_id;
-                theOne.normal = data.normal;
-                theOne.obj_id = data.obj_id;
-                theOne.t = data.t;
+                theOne = data;
             }
             
         }
@@ -40,17 +35,14 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
     for (int t = 0; t < sizeOfTriangles; t++)
     {
         Intersection data;
-        data.obj_id = id++;
+        
         data.triangleIntersect(scene, ray, t, 0, 7);
+        data.obj_id = id++;
         if (data.flag && data.t >= 0)
         {
             if(data.t < minT){
-                theOne.flag = data.flag;
-                theOne.intersectionPoint = data.intersectionPoint;
-                theOne.material_id = data.material_id;
-                theOne.normal = data.normal;
-                theOne.obj_id = data.obj_id;
-                theOne.t = data.t;
+                minT = data.t;
+                theOne = data;
             }
         }
     }
@@ -58,17 +50,14 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
     for (int m = 0; m < sizeOfMeshes; m++)
     {
         Intersection data;
-        data.obj_id = id++;
+        
         data.meshIntersect(scene, ray, m);
+        data.obj_id = id++;
         if (data.flag && data.t >= 0)
         {
             if(data.t < minT){
-                theOne.flag = data.flag;
-                theOne.intersectionPoint = data.intersectionPoint;
-                theOne.material_id = data.material_id;
-                theOne.normal = data.normal;
-                theOne.obj_id = data.obj_id;
-                theOne.t = data.t;
+                minT = data.t;
+                theOne = data;
             }
         }
     }
@@ -78,7 +67,7 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
 }
 
 
-
+/*
 Intersection Intersection::findFirst(std::vector<Intersection> &data)
 {
     Intersection curr;
@@ -99,7 +88,7 @@ Intersection Intersection::findFirst(std::vector<Intersection> &data)
     }
 
     return curr;
-}
+}*/
 
 void Intersection::sphereIntersect(Scene const &scene, Ray ray, int index)
 {
@@ -127,6 +116,8 @@ void Intersection::sphereIntersect(Scene const &scene, Ray ray, int index)
         normal = (intersectionPoint - center) / radius;
     }
 }
+
+
 void Intersection::triangleIntersect(Scene const &scene, Ray ray, int index, bool isMesh, int meshIndex)
 {
     Vec3f direction = ray.direction;
