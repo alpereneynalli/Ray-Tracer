@@ -117,9 +117,10 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
             Intersection reflectionIntersection = Intersection::calculateIntersection(scene, reflectionRay);
             
             if(reflectionIntersection.flag && reflectionIntersection.obj_id != intersection.obj_id){
-                reflectionColor = findColor(scene, camera, reflectionIntersection, reflectionRay, maxDepth - 1);
-                pixelVal += elementMultiply(reflectionColor, scene.materials[material_id - 1].mirror);
+                reflectionColor = findColor(scene, camera, reflectionIntersection, reflectionRay, maxDepth - 1); 
             }
+            pixelVal += elementMultiply(reflectionColor, scene.materials[material_id - 1].mirror);
+            
 
         }
 
@@ -127,8 +128,8 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
     else
     {
         pixelVal.x = scene.background_color.x;
-        pixelVal.x = scene.background_color.y;
-        pixelVal.x = scene.background_color.z;
+        pixelVal.y = scene.background_color.y;
+        pixelVal.z = scene.background_color.z;
     }
 
     pixelVal.x = std::min(pixelVal.x, 255.0f);

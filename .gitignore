@@ -2,5 +2,6 @@
 /*.ppm
 inputs/
 outputs/
+our_inputs/
 .vscode/
 raytracer

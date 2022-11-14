@@ -33,6 +33,7 @@ int main(int argc, char *argv[1])
 
         unsigned char *image = new unsigned char[width * height * 3];
         int pixelIndex = 0;
+        std::cout << curr.image_name.c_str() << std::endl;
 
         for (int i = 0; i < height; i++)
         {
@@ -52,12 +53,11 @@ int main(int argc, char *argv[1])
 
             }
 
-            if(i * 100 / width > progressBar)
+            if(i * 100 / height > progressBar)
             {
                 
-                std::cout << curr.image_name.c_str() << std::endl;
 
-                progressBar = i * 100 / width;
+                progressBar = i * 100 / height;
                 std::cout << progressBar << "% ";// Some computation here
 
                 auto end = std::chrono::system_clock::now();
