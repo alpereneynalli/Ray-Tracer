@@ -12,5 +12,4 @@ Vec3f calcSpecular(Scene const &scene, const PointLight &light, const Vec3f& int
 
 
 
-
 #endif

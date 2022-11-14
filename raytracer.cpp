@@ -22,46 +22,52 @@ int main(int argc, char *argv[1])
     scene.loadFromXml(argv[1]);
     int cameraNumber = scene.cameras.size();
 
+    int progressBar = 0;
+    auto start = std::chrono::system_clock::now();
+
     for (int c = 0; c < cameraNumber; c++)
     {
-        Camera cur = scene.cameras[c];
-        int width = cur.image_width;
-        int height = cur.image_height;
+        Camera curr = scene.cameras[c];
+        int width = curr.image_width;
+        int height = curr.image_height;
 
         unsigned char *image = new unsigned char[width * height * 3];
-        int pixelNumber = 0;
+        int pixelIndex = 0;
 
         for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
             {
-                Ray ray = Ray::generateRay0(cur, j, i);
+                Ray ray = Ray::generateRay(curr, j, i);
 
                 Intersection theOne = Intersection::calculateIntersection(scene, ray);
 
-                Vec3f pixelColor = findColor(scene, cur, theOne, ray, scene.max_recursion_depth);
+                Vec3f pixelVal = findColor(scene, curr, theOne, ray, scene.max_recursion_depth);
 
-                if (pixelColor.x > 255)
-                    image[pixelNumber] = 255;
-                else
-                    image[pixelNumber] = round(pixelColor.x);
+                image[pixelIndex++] = pixelVal.x;
 
-                if (pixelColor.y > 255)
-                    image[pixelNumber + 1] = 255;
-                else
-                    image[pixelNumber + 1] = round(pixelColor.y);
+                image[pixelIndex++] = pixelVal.y;
 
-                if (pixelColor.z > 255)
-                    image[pixelNumber + 2] = 255;
-                else
-                    image[pixelNumber + 2] = round(pixelColor.z);
+                image[pixelIndex++] = pixelVal.z;
 
-                pixelNumber += 3;
             }
 
+            if(i * 100 / width > progressBar)
+            {
+                
+                std::cout << curr.image_name.c_str() << std::endl;
+
+                progressBar = i * 100 / width;
+                std::cout << progressBar << "% ";// Some computation here
+
+                auto end = std::chrono::system_clock::now();
+                std::chrono::duration<double> elapsed_seconds = end-start;
+                std::cout << "elapsed time: " << elapsed_seconds.count() << "s"
+                        << std::endl;
+            }
         
         }
 
-        write_ppm(cur.image_name.c_str(), image, width, height);
+        write_ppm(curr.image_name.c_str(), image, width, height);
     }
 }

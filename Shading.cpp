@@ -1,13 +1,11 @@
 #include "Shading.h"
 #include <iostream>
+#include <cmath>
 
 Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &intersection, const Ray &ray, int maxDepth)
 {
-    float pixel1 = 0.0f;
-    float pixel2 = 0.0f;
-    float pixel3 = 0.0f;
 
-    Vec3f pixelColor;
+    Vec3f pixelVal{0.0f, 0.0f, 0.0f};
 
     int lightsSize = scene.point_lights.size();
     int spheresSize = scene.spheres.size();
@@ -18,9 +16,8 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
     {
         int material_id = intersection.material_id;
 
-        pixel1 = scene.materials[material_id - 1].ambient.x * scene.ambient_light.x;
-        pixel2 = scene.materials[material_id - 1].ambient.y * scene.ambient_light.y;
-        pixel3 = scene.materials[material_id - 1].ambient.z * scene.ambient_light.z;
+
+        pixelVal = elementMultiply(scene.materials[material_id - 1].ambient, scene.ambient_light);
 
         for (int currentLight = 0; currentLight < lightsSize; currentLight++)
         {
@@ -32,6 +29,7 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
 
             Ray rayShadow(intersection.intersectionPoint + epsilon, wi);
             Intersection data;
+
             float tL = rayShadow.getT(light.position);
             
             for (int cur = 0; cur < spheresSize; cur++)
@@ -97,9 +95,7 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
 
 		        Vec3f specular = calcSpecular(scene, light, intersection.intersectionPoint, wi, material_id, intersection.normal, ray);
 		                    
-              	pixel1 += diffuse.x + specular.x;
-  		        pixel2 += diffuse.y + specular.y;
-  		        pixel3 += diffuse.z + specular.z;
+              	pixelVal += diffuse + specular;
             
 	        }
 
@@ -108,7 +104,9 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
         }
         
         bool isReflective = scene.materials[material_id - 1].mirror.x > 0.0f || scene.materials[material_id - 1].mirror.y > 0.0f || scene.materials[material_id - 1].mirror.z > 0.0f;
+        
         Vec3f reflectionColor = {0.0f, 0.0f, 0.0f};
+
         if (isReflective && maxDepth > 0)
         {
             Vec3f reflectionDirection = normalize(intersection.normal * (-2 * dotProduct(ray.direction, intersection.normal)) + ray.direction);
@@ -120,26 +118,24 @@ Vec3f findColor(Scene const &scene, const Camera &camera, const Intersection &in
             
             if(reflectionIntersection.flag && reflectionIntersection.obj_id != intersection.obj_id){
                 reflectionColor = findColor(scene, camera, reflectionIntersection, reflectionRay, maxDepth - 1);
-                
+                pixelVal += elementMultiply(reflectionColor, scene.materials[material_id - 1].mirror);
             }
-            pixel1 += reflectionColor.x * scene.materials[material_id - 1].mirror.x;
-            pixel2 += reflectionColor.y * scene.materials[material_id - 1].mirror.y;
-            pixel3 += reflectionColor.z * scene.materials[material_id - 1].mirror.z;
+
         }
 
     }
     else
     {
-        pixel1 = scene.background_color.x;
-        pixel2 = scene.background_color.y;
-        pixel3 = scene.background_color.z;
+        pixelVal.x = scene.background_color.x;
+        pixelVal.x = scene.background_color.y;
+        pixelVal.x = scene.background_color.z;
     }
 
-    pixelColor.x = pixel1;
-    pixelColor.y = pixel2;
-    pixelColor.z = pixel3;
-
-    return pixelColor;
+    pixelVal.x = std::min(pixelVal.x, 255.0f);
+    pixelVal.y = std::min(pixelVal.y, 255.0f);
+    pixelVal.z = std::min(pixelVal.z, 255.0f);
+    
+    return pixelVal;
 }
 
 Vec3f calcIrradiance(const PointLight &light, const Vec3f& intersectionPoint ){
@@ -159,9 +155,8 @@ Vec3f calcDiffuse(Scene const &scene, const PointLight &light, const Vec3f& inte
     Vec3f irradiance = calcIrradiance(light, intersectionPoint);
     float dot = std::max(0.0f, dotProduct(wi, normal));
     
-    diffuse.x *= irradiance.x * dot;
-    diffuse.y *= irradiance.y * dot;
-    diffuse.z *= irradiance.z * dot;
+    diffuse = elementMultiply(diffuse, irradiance * dot);
+
     return diffuse;
 }
 
@@ -175,10 +170,8 @@ Vec3f calcSpecular(Scene const &scene, const PointLight &light, const Vec3f& int
     
     float phongExp = powf(dot, scene.materials[material_id - 1].phong_exponent);
     
-    
-    specular.x *= irradiance.x * phongExp;
-    specular.y *= irradiance.y * phongExp;
-    specular.z *= irradiance.z * phongExp;
+    specular = elementMultiply(specular, irradiance * phongExp);
+
     return specular;
     
 }

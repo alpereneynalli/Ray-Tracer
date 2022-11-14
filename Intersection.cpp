@@ -50,9 +50,9 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
     for (int m = 0; m < sizeOfMeshes; m++)
     {
         Intersection data;
-        
         data.meshIntersect(scene, ray, m);
         data.obj_id = id++;
+
         if (data.flag && data.t >= 0)
         {
             if(data.t < minT){
@@ -66,29 +66,6 @@ Intersection Intersection::calculateIntersection(Scene const &scene, Ray ray){
     return theOne;
 }
 
-
-/*
-Intersection Intersection::findFirst(std::vector<Intersection> &data)
-{
-    Intersection curr;
-    curr.flag = false;
-
-    int size = data.size();
-    if (!data.empty())
-    {
-        curr = data[0];
-        for (int i = 1; i < size; i++)
-        {
-            if (curr.t > data[i].t)
-            {
-                curr = data[i];
-            }
-        }
-        curr.flag = true;
-    }
-
-    return curr;
-}*/
 
 void Intersection::sphereIntersect(Scene const &scene, Ray ray, int index)
 {
@@ -107,6 +84,7 @@ void Intersection::sphereIntersect(Scene const &scene, Ray ray, int index)
     {
         flag = false;
     }
+
     else
     {
         t = fminf((-1 * B + sqrtf(disc)) / 2 * A, (-1 * B - sqrtf(disc)) / 2 * A);
@@ -144,37 +122,33 @@ void Intersection::triangleIntersect(Scene const &scene, Ray ray, int index, boo
         v2 = scene.vertex_data[triangle.indices.v2_id - 1];
         this->material_id = triangle.material_id;
     }
+
     Vec3f edge0 = v0 - v1;
     Vec3f edge1 = v0 - v2;
     Vec3f to_origin = v0 - origin;
 
     flag = false;
+
     float det0 = determinant(edge0.x, edge1.x, direction.x,
                              edge0.y, edge1.y, direction.y,
                              edge0.z, edge1.z, direction.z);
 
-    if (det0 == 0.0)
+    if (det0 == 0.0f)
     {
         return;
     }
-
-
     
     float G = determinant(edge0.x, to_origin.x, direction.x,
                           edge0.y, to_origin.y, direction.y,
-                          edge0.z, to_origin.z, direction.z) /
-              det0;
+                          edge0.z, to_origin.z, direction.z) / det0;
     if (G < 0 || G > 1)
     {
         return;
     }
 
-
-
     float B = determinant(to_origin.x, edge1.x, direction.x,
                           to_origin.y, edge1.y, direction.y,
-                          to_origin.z, edge1.z, direction.z) / 
-                          det0;
+                          to_origin.z, edge1.z, direction.z) / det0;
     if (B < 0 || B > 1 - G)
     {
         return;
@@ -183,8 +157,7 @@ void Intersection::triangleIntersect(Scene const &scene, Ray ray, int index, boo
 
     t = determinant(edge0.x, edge1.x, to_origin.x,
                     edge0.y, edge1.y, to_origin.y,
-                    edge0.z, edge1.z, to_origin.z) /
-        det0;
+                    edge0.z, edge1.z, to_origin.z) / det0;
     if (t <= 0)
     { // CHECK IF NEC FOR T
         return;
@@ -193,6 +166,7 @@ void Intersection::triangleIntersect(Scene const &scene, Ray ray, int index, boo
     this->flag = true;
     this->intersectionPoint = ray.getRayPoint(t);
     this->normal = normalize(crossProduct(v1 - v0, v2 - v0));
+    
 }
 void Intersection::meshIntersect(Scene const &scene, Ray ray, int index)
 {
